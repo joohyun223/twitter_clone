@@ -5,12 +5,15 @@ import { authService } from "fbase"
 function App() {
   const [init, setInit] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userObj, setUserObj] = useState(null);
+
 
   useEffect(()=>{
-    //firebase 초기화 여부
+    //firebase 초기화 여부 (로그인/로그아웃 시 trigger)
     authService.onAuthStateChanged((user)=>{
       if(user){
         setIsLoggedIn(true);
+        setUserObj(user);
       }else{
         setIsLoggedIn(false);
       }
@@ -20,7 +23,7 @@ function App() {
 
   return (
     <>
-    {init ? <AppRouter isLoggedIn={isLoggedIn} /> : "Initializing..."}
+    {init ? <AppRouter isLoggedIn={isLoggedIn} userObj={userObj} /> : "Initializing..."}
     <footer>&copy; {new Date().getFullYear()} Nwitter</footer> 
     </>
   )
