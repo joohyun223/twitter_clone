@@ -1,6 +1,6 @@
 import Nweet from 'components/Nweet';
 import NweetFactory from 'components/NweetFactory';
-import { dbService , storageService } from 'fbase';
+import { dbService } from 'fbase';
 import React, { useEffect, useState } from 'react';
 
 const Home = ({userObj})=>{
@@ -9,19 +9,22 @@ const Home = ({userObj})=>{
     // 컴포넌트가 화면에 나타날 때
     useEffect(() => {
         //realtime listener
-        dbService.collection("nweets").onSnapshot(snapshot=>{
+        dbService
+        .collection("nweets")
+        .orderBy("createdAt", "desc")
+        .onSnapshot((snapshot)=>{
             const nweetArray = snapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data(),
             }));
             setNweets(nweetArray);
-        })
+        });
     }, []);
 
     return (
-        <div>
+        <div className="container">
             <NweetFactory userObj={userObj}/>
-            <div> 
+            <div style={{ marginTop: 30 }}>
                 {nweets.map(nweet =>
                 (
                     <Nweet key={nweet.id} nweetObj={nweet} isOwner={nweet.creatorId === userObj.uid} />   
